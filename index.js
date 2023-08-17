@@ -26,6 +26,10 @@ app.use((req, res, next) => {
     next();
 });
 
+app.get(`/ping`, (req, res) => {
+    res.send({ version: require(`./package.json`).version, message: `Pong!` });
+})
+
 app.post(`/refresh`, (req, res) => {
     delete require.cache[require.resolve('./config.json')];
     server.cfg = require(`./config.json`);
