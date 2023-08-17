@@ -1,6 +1,8 @@
 {
-    "token": "",
     "port": 6767,
+    "token": "",
+    "logIPs": false,
+    "timeFormat": "YYYY-MM-DD HH:mm:ss",
     "users": [
         {
             "id": "example",

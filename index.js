@@ -1,6 +1,7 @@
 const express = require(`express`);
 const http = require(`http`);
 const parser = require(`body-parser`);
+const moment = require(`moment`);
 const TelegramAPI = require(`node-telegram-bot-api`);
 const Ratelimiter = require(`./Ratelimiter`);
 const app = express();
@@ -15,6 +16,14 @@ server.bot = new TelegramAPI(server.cfg.token, { polling: true });
 
 server.app = http.createServer(app).listen(server.cfg.port, () => {
     console.log(`Server listening on port ${server.cfg.port}`);
+});
+
+app.use((req, res, next) => {
+    const time = moment(new Date()).format(server.cfg.timeFormat);
+    const ip = server.cfg.logIPs ? req.ip : `XXXXXX`;
+
+    console.log(`[${time}] ${ip} sent ${req.method} request to ${req.path.toLowerCase()} with ${req.body.message ? `message: ${req.body.message}` : `no message`}`);
+    next();
 });
 
 app.post(`/:user`, (req, res) => {
