@@ -1,0 +1,20 @@
+{
+    "token": "",
+    "port": 6767,
+    "users": [
+        {
+            "id": "example",
+            "aliases": [],
+            "conversation": "",
+            "auth": {
+                "active": false,
+                "key": ""
+            }
+        }
+    ],
+    "ratelimiter": {
+        "enabled": true,
+        "max": 10,
+        "seconds": 60
+    }
+}
