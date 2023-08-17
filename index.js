@@ -26,6 +26,12 @@ app.use((req, res, next) => {
     next();
 });
 
+app.post(`/refresh`, (req, res) => {
+    delete require.cache[require.resolve('./config.json')];
+    server.cfg = require(`./config.json`);
+    res.send({ message: `Config reloaded!` });
+});
+
 app.post(`/:user`, (req, res) => {
     if(server.ratelimiter.ratelimitResponse(req, res)) return;
     const username = req.params.user.toLowerCase();

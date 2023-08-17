@@ -35,5 +35,7 @@ The `config.json` file contains the following options:
 ## Usage
 
 ### Sending messages
+To send a message to a user, simply send a `POST` request to `/user` where `user` is the user's ID or one of their aliases. The request body should contain a JSON object with the `message` property. If the user has authentication enabled, you also need to include an `Authorization` header with the value of their key.
 
-To send a message to a user, simply send a POST request to `/user` where `user` is the user's ID or one of their aliases. The request body should contain a JSON object with the `message` property. If the user has authentication enabled, you also need to include an `Authorization` header with the value of their key.
+### Refreshing the config (Maybe for user adding and stuff)
+Just send a `POST` request to `/refresh` and the config get's refreshed.
