@@ -60,7 +60,7 @@ class Ratelimiter {
         };
         if(Date.now() - player.timestamp >= this.timeWindow) {
             this.ips.delete(ip);
-            return this.getRatelimitData(ip);
+            return this.getRateLimitInfo(ip);
         }
         return {
             limited: player.requests++ >= this.maxRequests,
