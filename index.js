@@ -27,7 +27,7 @@ app.use((req, res, next) => {
 });
 
 app.get(`/ping`, (req, res) => {
-    res.send({ version: require(`./package.json`).version, message: `Pong!` });
+    res.send({ message: `Pong!`, version: require(`./package.json`).version });
 })
 
 app.post(`/refresh`, (req, res) => {
