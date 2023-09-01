@@ -27,10 +27,11 @@ app.use((req, res, next) => {
 });
 
 app.get(`/ping`, (req, res) => {
-    res.send({ version: require(`./package.json`).version, message: `Pong!` });
+    res.send({ message: `Pong!`, version: require(`./package.json`).version });
 })
 
 app.post(`/refresh`, (req, res) => {
+    if(server.cfg.adminToken?.trim() != `` && server.cfg.adminToken != req.headers.authorization) return res.status(403).send({ message: `403: You're not allowed to access this route!` });
     delete require.cache[require.resolve('./config.json')];
     server.cfg = require(`./config.json`);
     res.send({ message: `Config reloaded!` });
