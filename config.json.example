@@ -7,6 +7,7 @@
         {
             "id": "example",
             "aliases": [],
+            "private": false,
             "conversation": "",
             "auth": {
                 "active": false,

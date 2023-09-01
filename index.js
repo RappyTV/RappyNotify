@@ -36,7 +36,22 @@ app.post(`/refresh`, (req, res) => {
     res.send({ message: `Config reloaded!` });
 });
 
-app.post(`/:user`, (req, res) => {
+app.route(`/:user`)
+.get((req, res) => {
+    if(server.ratelimiter.ratelimitResponse(req, res)) return;
+    const username = req.params.user.toLowerCase();
+    const user = server.cfg.users.find((u) => u.id == username || u.aliases.includes(username));
+
+    if(!user || user.private) return res.status(404).send({ message: `404: User not found!` });
+    res.send({
+        id: user.id,
+        aliases: user.aliases,
+        auth: {
+            active: user.auth.active
+        }
+    });
+})
+.post((req, res) => {
     if(server.ratelimiter.ratelimitResponse(req, res)) return;
     const username = req.params.user.toLowerCase();
     const user = server.cfg.users.find((u) => u.id == username || u.aliases.includes(username));
