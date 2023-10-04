@@ -28,6 +28,8 @@ class Ratelimiter {
 
     ratelimitResponse(req, res) {
         if(!server.cfg.ratelimiter.enabled) return false;
+        const bypass = req.headers["x-ratelimit-bypass"];
+        if(bypass && server.cfg.ratelimiter.bypassTokens.includes(bypass)) return false;
         const ratelimitData = this.getRateLimitInfo(req.ip);
         res.setHeader(`X-RateLimit-Limit`, this.maxRequests);
         if(!ratelimitData.limited) res.setHeader(`X-RateLimit-Remaining`, ratelimitData.remaining); // ik this looks weird but the order of the headers is important

@@ -33,6 +33,7 @@ The `config.json` file contains the following options:
 | `ratelimiter.enabled` | Whether or not to enable the ratelimiter |
 | `ratelimiter.max` | The maximum amount of requests a user can send in the time window |
 | `ratelimiter.seconds` | The length of the ratelimiter time window in seconds |
+| `ratelimiter.bypassTokens` | An array of strings you can put in the `x-ratelimit-bypass` header to bypass the ratelimit |
 
 \* Is optional so you can leave it empty 
 ## Usage

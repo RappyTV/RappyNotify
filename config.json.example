@@ -1,4 +1,5 @@
 {
+    "token": "",
     "port": 6767,
     "token": "",
     "logIPs": false,
@@ -19,6 +20,7 @@
     "ratelimiter": {
         "enabled": true,
         "max": 10,
-        "seconds": 60
+        "seconds": 60,
+        "bypassTokens": []
     }
 }
