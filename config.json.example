@@ -4,10 +4,12 @@
     "token": "",
     "logIPs": false,
     "timeFormat": "YYYY-MM-DD HH:mm:ss",
+    "adminToken": ""
     "users": [
         {
             "id": "example",
             "aliases": [],
+            "private": false,
             "conversation": "",
             "auth": {
                 "active": false,

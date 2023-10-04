@@ -27,16 +27,32 @@ app.use((req, res, next) => {
 });
 
 app.get(`/ping`, (req, res) => {
-    res.send({ version: require(`./package.json`).version, message: `Pong!` });
+    res.send({ message: `Pong!`, version: require(`./package.json`).version });
 })
 
 app.post(`/refresh`, (req, res) => {
+    if(server.cfg.adminToken?.trim() != `` && server.cfg.adminToken != req.headers.authorization) return res.status(403).send({ message: `403: You're not allowed to access this route!` });
     delete require.cache[require.resolve('./config.json')];
     server.cfg = require(`./config.json`);
     res.send({ message: `Config reloaded!` });
 });
 
-app.post(`/:user`, (req, res) => {
+app.route(`/:user`)
+.get((req, res) => {
+    if(server.ratelimiter.ratelimitResponse(req, res)) return;
+    const username = req.params.user.toLowerCase();
+    const user = server.cfg.users.find((u) => u.id == username || u.aliases.includes(username));
+
+    if(!user || user.private) return res.status(404).send({ message: `404: User not found!` });
+    res.send({
+        id: user.id,
+        aliases: user.aliases,
+        auth: {
+            active: user.auth.active
+        }
+    });
+})
+.post((req, res) => {
     if(server.ratelimiter.ratelimitResponse(req, res)) return;
     const username = req.params.user.toLowerCase();
     const user = server.cfg.users.find((u) => u.id == username || u.aliases.includes(username));

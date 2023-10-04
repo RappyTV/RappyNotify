@@ -20,9 +20,11 @@ The `config.json` file contains the following options:
 | `port` | The port to run the server on |
 | `logIPs` | Whether or not to log IPs in the console |
 | `timeFormat` | The format of the time in the console |
+| `adminToken` * | Authorization token required to perform actions like `POST` `/refresh` |
 | `users` | An array of users |
 | `users.id` | The user's internal ID (not the telegram id!) |
 | `users.aliases` | An array of aliases for the user |
+| `users.private` | Decides if the user info can be shown on `GET` `/:user` |
 | `users.conversation` | The ID of the conversation to send messages to |
 | `users.auth` | An object containing authentication options for the user |
 | `users.auth.active` | Whether or not the user needs to enter the key to send messages |
@@ -33,6 +35,7 @@ The `config.json` file contains the following options:
 | `ratelimiter.seconds` | The length of the ratelimiter time window in seconds |
 | `ratelimiter.bypassTokens` | An array of strings you can put in the `x-ratelimit-bypass` header to bypass the ratelimit |
 
+\* Is optional so you can leave it empty 
 ## Usage
 
 ### Sending messages
