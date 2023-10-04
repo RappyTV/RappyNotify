@@ -18,6 +18,7 @@
     "ratelimiter": {
         "enabled": true,
         "max": 10,
-        "seconds": 60
+        "seconds": 60,
+        "bypassTokens": []
     }
 }
