@@ -1,7 +1,7 @@
 {
   "name": "rappynotify",
   "description": "This is a simple SMS gateway for Telegram.",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "main": "index.js",
   "devDependencies": {},
   "scripts": {
