@@ -14,8 +14,43 @@ server.cfg = require(`./config.json`);
 server.ratelimiter = new Ratelimiter();
 server.bot = new TelegramAPI(server.cfg.token, { polling: true });
 
+function validateConfig() {
+    const allIds = [];
+    for(const user of server.cfg.users) {
+        if(allIds.includes(user.id.toLowerCase()) || allIds.some((id) => user.aliases.includes(id.toLowerCase()))) {
+            console.log(`[ERROR] Duplicate ID or alias in user ${user.id.toLowerCase()}!`);
+            return false;
+        }
+        allIds.push(user.id.toLowerCase(), ...user.aliases.map((a) => a.toLowerCase()));
+    }
+    for(const group of server.cfg.groups) {
+        if(allIds.includes(group.id.toLowerCase()) || allIds.some((id) => group.aliases.includes(id.toLowerCase()))) {
+            console.log(`[ERROR] Duplicate ID or alias in group ${group.id.toLowerCase()}!`);
+            return false;
+        }
+        allIds.push(group.id.toLowerCase(), ...group.aliases.map((a) => a.toLowerCase()));
+
+        const users = [];
+        for(const user of group.users) {
+            const data = server.cfg.users.find((u) => u.id.toLowerCase() == user.id.toLowerCase() || u.aliases.includes(user.id.toLowerCase()));
+            if(!data) {
+                console.log(`[ERROR] Unknown user ID or alias "${user.id.toLowerCase()}" in group ${group.id.toLowerCase()}!`);
+                return false;
+            }
+            if(users.some((u) => u.id.toLowerCase() == data.id.toLowerCase() || data.aliases.includes(u.id.toLowerCase()))) {
+                console.log(`[ERROR] Duplicate user ID or alias in ${group.id.toLowerCase()}: ${user.id.toLowerCase()}!`);
+                return false;
+            }
+            users.push(data);
+        }
+    }
+
+    return true;
+}
+
 server.app = http.createServer(app).listen(server.cfg.port, () => {
     console.log(`Server listening on port ${server.cfg.port}`);
+    if(!validateConfig()) process.exit(1);
 });
 
 app.use((req, res, next) => {
@@ -37,32 +72,57 @@ app.post(`/refresh`, (req, res) => {
     res.send({ message: `Config reloaded!` });
 });
 
-app.route(`/:user`)
+app.route(`/:id`)
 .get((req, res) => {
     if(server.ratelimiter.ratelimitResponse(req, res)) return;
-    const username = req.params.user.toLowerCase();
-    const user = server.cfg.users.find((u) => u.id == username || u.aliases.includes(username));
+    const id = req.params.id.toLowerCase();
+    const user = server.cfg.users.find((u) => u.id.toLowerCase() == id || u.aliases.includes(id));
+    const group = server.cfg.groups.find((g) => g.id.toLowerCase() == id || g.aliases.includes(id));
 
-    if(!user || user.private) return res.status(404).send({ message: `404: User not found!` });
-    res.send({
-        id: user.id,
-        aliases: user.aliases,
-        auth: {
-            active: user.auth.active
-        }
-    });
+    if((!user || user.private) && (!group || group.private)) return res.status(404).send({ message: `404: User or group not found!` });
+    if(user) {
+        res.send({
+            id: user.id,
+            aliases: user.aliases,
+            auth: {
+                active: user.auth.active
+            },
+            type: `user`
+        });
+    } else {
+        res.send({
+            id: group.id,
+            aliases: group.aliases,
+            size: group.users.length,
+            users: group.users.map((u) => u.private ? `<hidden>` : u.id),
+            auth: {
+                active: group.auth.active
+            },
+            type: `group`
+        });
+    }
 })
 .post((req, res) => {
     if(server.ratelimiter.ratelimitResponse(req, res)) return;
-    const username = req.params.user.toLowerCase();
-    const user = server.cfg.users.find((u) => u.id == username || u.aliases.includes(username));
+    const id = req.params.id.toLowerCase();
+    const user = server.cfg.users.find((u) => u.id.toLowerCase() == id || u.aliases.includes(id));
+    const group = server.cfg.groups.find((g) => g.id.toLowerCase() == id || g.aliases.includes(id));
     const message = req.body.message;
 
-    if(!user) return res.status(404).send({ message: `404: User not found!` });
-    if(user.auth.active && user.auth.key != req.headers.authorization) return res.status(403).send({ message: `403: You need to enter the key to send messages to this user!` });
+    if(!user && !group) return res.status(404).send({ message: `404: User or group not found!` });
     if(!message) return res.status(400).send({ message: `400: No message provided!` });
-    server.bot.sendMessage(user.conversation, message);
-    res.send({ message: `Message successfully sent to ${user.id}!` });
+    if(user) {
+        if(user.auth.active && user.auth.key != req.headers.authorization) return res.status(403).send({ message: `403: You need to enter the key to send messages to this user!` });
+        server.bot.sendMessage(user.conversation, message);
+        res.send({ message: `Message successfully sent to ${user.id}!` });
+    } else {
+        if(group.auth.active && group.auth.key != req.headers.authorization) return res.status(403).send({ message: `403: You need to enter the key to send messages to this group!` });
+        group.users.forEach((user) => {
+            const { conversation } = server.cfg.users.find((u) => u.id == user.id || u.aliases.includes(user.id));
+            server.bot.sendMessage(conversation, message);
+        });
+        res.send({ message: `Message successfully sent to ${group.users.length} users!` });
+    }
 });
 
 app.use((req, res, next) => {
