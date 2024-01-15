@@ -4,13 +4,30 @@
     "token": "",
     "logIPs": false,
     "timeFormat": "YYYY-MM-DD HH:mm:ss",
-    "adminToken": ""
+    "adminToken": "",
     "users": [
         {
-            "id": "example",
+            "id": "exampleUser",
             "aliases": [],
             "private": false,
             "conversation": "",
+            "auth": {
+                "active": false,
+                "key": ""
+            }
+        }
+    ],
+    "groups": [
+        {
+            "id": "exampleGroup",
+            "aliases": [],
+            "private": false,
+            "users": [
+                {
+                    "id": "exampleUser",
+                    "private": false
+                },
+            ],
             "auth": {
                 "active": false,
                 "key": ""
