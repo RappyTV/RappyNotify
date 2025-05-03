@@ -1,14 +1,12 @@
 {
     "token": "",
     "port": 6767,
-    "token": "",
-    "logIPs": false,
     "timeFormat": "YYYY-MM-DD HH:mm:ss",
-    "adminToken": "",
     "users": [
         {
-            "id": "exampleUser",
+            "id": "exampleuser",
             "aliases": [],
+            "groups": ["examplegroup"],
             "private": false,
             "conversation": "",
             "auth": {
@@ -19,25 +17,13 @@
     ],
     "groups": [
         {
-            "id": "exampleGroup",
+            "id": "examplegroup",
             "aliases": [],
             "private": false,
-            "users": [
-                {
-                    "id": "exampleUser",
-                    "private": false
-                },
-            ],
             "auth": {
                 "active": false,
                 "key": ""
             }
         }
-    ],
-    "ratelimiter": {
-        "enabled": true,
-        "max": 10,
-        "seconds": 60,
-        "bypassTokens": []
-    }
+    ]
 }
