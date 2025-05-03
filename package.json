@@ -1,26 +1,25 @@
 {
   "name": "rappynotify",
-  "description": "This is a simple SMS gateway for Telegram.",
-  "version": "1.0.6",
-  "main": "index.js",
-  "devDependencies": {},
+  "version": "1.0.0",
+  "module": "src/index.ts",
+  "type": "module",
+  "private": true,
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "bun run src/index.ts",
+    "dev": "bun run --watch src/index.ts"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/RappyTV/RappyNotify.git"
+  "devDependencies": {
+    "@types/bun": "latest",
+    "@types/node-telegram-bot-api": "^0.64.8"
   },
-  "author": "RappyTV",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/RappyTV/RappyNotify/issues"
+  "peerDependencies": {
+    "typescript": "^5"
   },
-  "homepage": "https://github.com/RappyTV/RappyNotify#readme",
   "dependencies": {
-    "axios": "^1.4.0",
-    "express": "^4.18.2",
-    "moment": "^2.29.4",
-    "node-telegram-bot-api": "^0.61.0"
+    "axios": "^1.9.0",
+    "chalk": "^5.4.1",
+    "elysia": "^1.2.25",
+    "moment": "^2.30.1",
+    "node-telegram-bot-api": "^0.66.0"
   }
 }
